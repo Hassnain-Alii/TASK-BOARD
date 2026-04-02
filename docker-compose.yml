@@ -1,0 +1,77 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: taskboard_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - taskboard_network
+
+  redis:
+    image: redis:alpine
+    container_name: taskboard_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - taskboard_network
+
+  minio:
+    image: minio/minio
+    container_name: taskboard_minio
+    ports:
+      - "9002:9000"
+      - "9003:9001"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - taskboard_network
+
+  server:
+    build:
+      context: ./server
+    container_name: taskboard_server
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/taskboard
+      - REDIS_URL=redis://redis:6379
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - CLIENT_URL=http://localhost:5174
+    depends_on:
+      - mongodb
+      - redis
+      - minio
+    networks:
+      - taskboard_network
+
+  client:
+    build:
+      context: ./client
+    container_name: taskboard_client
+    ports:
+      - "5174:5173"
+    depends_on:
+      - server
+    networks:
+      - taskboard_network
+
+networks:
+  taskboard_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
+  minio_data:
