@@ -97,6 +97,16 @@ app.get('/', (req, res) => {
   res.send('TaskBoard Enterprise Edition API — Secure & Running');
 });
 
+// [SECURITY FIX]: 404 handler for undefined /api routes
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ error: 'Endpoint Not Found', message: `The route ${req.originalUrl} does not exist.` });
+});
+
+// [SECURITY FIX]: General 404 for any other non-API service routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found', message: 'The resource you requested is unavailable.' });
+});
+
 // Global error handler
 app.use((err, req, res, next) => {
   req.log && req.log.error(err);

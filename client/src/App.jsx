@@ -7,6 +7,7 @@ import Signup       from './pages/Signup';
 import Board        from './pages/Board';
 import Account      from './pages/Account';
 import OAuthCallback from './pages/OAuthCallback';
+import NotFound      from './pages/NotFound';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -31,6 +32,7 @@ function App() {
           <Route path="/board" element={<PrivateRoute><Board /></PrivateRoute>} />
           <Route path="/account" element={<PrivateRoute><Account /></PrivateRoute>} />
           <Route path="/" element={<Navigate to="/board" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </AuthProvider>

@@ -87,7 +87,7 @@ const Signup = () => {
         </div>
 
         <a
-          href="http://localhost:5000/api/auth/google"
+          href={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}/api/auth/google`}
           className="flex items-center justify-center gap-3 w-full py-3 px-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all mb-6"
         >
           <svg width="20" height="20" viewBox="0 0 24 24">
