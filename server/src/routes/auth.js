@@ -4,9 +4,21 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const passport = require('passport');
+const multer = require('multer');
 const auth = require('../middleware/auth');
 const User = require('../models/User');
+const supabase = require('../config/supabase');
 const { check, validationResult } = require('express-validator');
+
+// Multer — memory storage for avatar uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB max
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) cb(null, true);
+    else cb(new Error('Only image files are allowed'), false);
+  }
+});
 
 // [SECURITY FIX]: Centralized validation handler to ensure consistent error responses and prevent malformed data from reaching the database.
 const validate = (req, res, next) => {
@@ -229,6 +241,44 @@ router.put(
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
+  }
+});
+
+// ─── POST /api/auth/upload-avatar ────────────────────────────────────────────
+// Accepts a local image file, uploads it to Supabase storage, and saves the URL to the user profile.
+router.post('/upload-avatar', [auth, upload.single('avatar')], async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ msg: 'No image file provided' });
+
+    const ext = req.file.originalname.split('.').pop();
+    const filePath = `avatars/${req.user.id}.${ext}`;
+
+    // Upload to Supabase (upsert so it always overwrites the old avatar)
+    const { error } = await supabase.storage
+      .from('attachments')
+      .upload(filePath, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: true
+      });
+
+    if (error) throw error;
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('attachments')
+      .getPublicUrl(filePath);
+
+    // Save URL to user
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: { avatar: publicUrl } },
+      { new: true }
+    ).select('-password');
+
+    res.json({ avatar: publicUrl, user });
+  } catch (err) {
+    console.error('[AVATAR UPLOAD ERROR]:', err.message);
+    res.status(500).json({ msg: 'Avatar upload failed' });
   }
 });
 

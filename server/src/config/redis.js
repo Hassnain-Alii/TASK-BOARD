@@ -1,7 +1,11 @@
 const redis = require('redis');
 
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const isTLS = redisUrl.startsWith('rediss://'); // Upstash uses rediss://, local uses redis://
+
 const redisClient = redis.createClient({
-  url: process.env.REDIS_URL
+  url: redisUrl,
+  socket: isTLS ? { tls: true, rejectUnauthorized: false } : {}
 });
 
 redisClient.on('error', (err) => console.log('Redis Client Error', err));

@@ -3,7 +3,12 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Task = require('../models/Task');
 const redisClient = require('../config/redis');
+const supabase = require('../config/supabase');
+const multer = require('multer');
 const { check, validationResult } = require('express-validator');
+
+// Multer memory-storage for temporary buffering before cloud upload
+const upload = multer({ storage: multer.memoryStorage() });
 
 // [SECURITY FIX]: Centralized validation handler for task routes to ensure data consistency and prevent XSS/Injection.
 const validate = (req, res, next) => {
@@ -168,6 +173,55 @@ router.delete('/:id', auth, async (req, res) => {
          return res.status(404).json({ msg: 'Task not found' });
     }
     res.status(500).send('Server Error');
+  }
+});
+
+// @route   POST api/tasks/:id/upload
+// @desc    Upload an attachment to a task
+// @access  Private [STUDENT FREE CLOUD VERSION]
+router.post('/:id/upload', [auth, upload.single('file')], async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ msg: 'No file uploaded' });
+
+    let task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ msg: 'Task not found' });
+    if (task.user.toString() !== req.user.id) return res.status(401).json({ msg: 'Not authorized' });
+
+    // 1. Generate unique file path
+    const fileName = `${req.user.id}/${Date.now()}-${req.file.originalname}`;
+
+    // 2. Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('attachments')
+      .upload(fileName, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: true
+      });
+
+    if (error) throw error;
+
+    // 3. Get Public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('attachments')
+      .getPublicUrl(fileName);
+
+    // 4. Update MongoDB Task model
+    const attachment = {
+      name: req.file.originalname,
+      url: publicUrl,
+      type: req.file.mimetype
+    };
+
+    task.attachments.push(attachment);
+    await task.save();
+
+    // 5. Clear Redis Cache
+    await clearCache(req.user.id);
+
+    res.json(task);
+  } catch (err) {
+    console.error('[SUPABASE UPLOAD ERROR]:', err.message);
+    res.status(500).send('Server Error (Upload Failed)');
   }
 });
 

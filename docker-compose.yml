@@ -34,38 +34,38 @@ services:
     networks:
       - taskboard_network
 
-  server:
-    build:
-      context: ./server
-    container_name: taskboard_server
-    ports:
-      - "5000:5000"
-    env_file:
-      - ./server/.env
-    environment:
-      - NODE_ENV=production
-      - MONGODB_URI=mongodb://mongodb:27017/taskboard
-      - REDIS_URL=redis://redis:6379
-      - MINIO_ENDPOINT=minio
-      - MINIO_PORT=9000
-      - CLIENT_URL=http://localhost:5174
-    depends_on:
-      - mongodb
-      - redis
-      - minio
-    networks:
-      - taskboard_network
+  # server:
+  #   build:
+  #     context: ./server
+  #   container_name: taskboard_server
+  #   ports:
+  #     - "5000:5000"
+  #   env_file:
+  #     - ./server/.env
+  #   environment:
+  #     - NODE_ENV=production
+  #     - MONGODB_URI=mongodb://mongodb:27017/taskboard
+  #     - REDIS_URL=redis://redis:6379
+  #     - MINIO_ENDPOINT=minio
+  #     - MINIO_PORT=9000
+  #     - CLIENT_URL=http://localhost:5174
+  #   depends_on:
+  #     - mongodb
+  #     - redis
+  #     - minio
+  #   networks:
+  #     - taskboard_network
 
-  client:
-    build:
-      context: ./client
-    container_name: taskboard_client
-    ports:
-      - "5174:5173"
-    depends_on:
-      - server
-    networks:
-      - taskboard_network
+  # client:
+  #   build:
+  #     context: ./client
+  #   container_name: taskboard_client
+  #   ports:
+  #     - "5174:5173"
+  #   depends_on:
+  #     - server
+  #   networks:
+  #     - taskboard_network
 
 networks:
   taskboard_network:

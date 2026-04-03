@@ -7,6 +7,14 @@ const TaskSchema = new mongoose.Schema({
   status: { type: String, enum: ['todo', 'in-progress', 'done'], default: 'todo' },
   dueDate: { type: Date },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  attachments: [
+    {
+      name: { type: String, required: true },
+      url: { type: String, required: true },
+      type: { type: String }, // e.g., 'image/png', 'application/pdf'
+      createdAt: { type: Date, default: Date.now }
+    }
+  ],
   createdAt: { type: Date, default: Date.now },
 });
 

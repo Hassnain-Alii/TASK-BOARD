@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { FiEdit2, FiTrash2, FiClock } from 'react-icons/fi';
+import { FiEdit2, FiTrash2, FiClock, FiPaperclip } from 'react-icons/fi';
 import { format } from 'date-fns';
 
 const PRIORITY_LABEL = { high: '🔴 High', medium: '🟡 Medium', low: '🔵 Low' };
@@ -56,12 +56,18 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
       )}
 
       <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-        <span className={PRIORITY_BADGE[task.priority]}>{PRIORITY_LABEL[task.priority]}</span>
-        {task.dueDate && (
-          <span className="flex items-center gap-1 text-xs text-slate-400">
-            <FiClock size={11}/> {format(new Date(task.dueDate), 'MMM d')}
-          </span>
-        )}
+        <div className="flex items-center gap-3">
+          {task.attachments?.length > 0 && (
+            <span className="flex items-center gap-1 text-xs text-indigo-500 font-medium bg-indigo-50 px-1.5 py-0.5 rounded-md" title={`${task.attachments.length} attachments`}>
+              <FiPaperclip size={10}/> {task.attachments.length}
+            </span>
+          )}
+          {task.dueDate && (
+            <span className="flex items-center gap-1 text-xs text-slate-400">
+              <FiClock size={11}/> {format(new Date(task.dueDate), 'MMM d')}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

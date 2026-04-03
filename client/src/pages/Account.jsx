@@ -1,6 +1,6 @@
-import React, { useState, useContext,  } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { FiUser, FiShield, FiCamera, FiArrowLeft, FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiUser, FiShield, FiCamera, FiArrowLeft, FiEye, FiEyeOff, FiLoader } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext';
 import Toast from '../components/Toast';
 import api from '../api/taskApi';
@@ -12,10 +12,12 @@ const TABS = [
 
 const Account = () => {
   const { user } = useContext(AuthContext);
+  const avatarInputRef = useRef(null);
 
-  const [tab,     setTab]     = useState('profile');
-  const [toast,   setToast]   = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [tab,             setTab]             = useState('profile');
+  const [toast,           setToast]           = useState(null);
+  const [loading,         setLoading]         = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   // Profile form
   const [profile, setProfile] = useState({
@@ -33,6 +35,34 @@ const Account = () => {
 
   const showToast = (msg, type = 'success') => setToast({ msg, type });
 
+  // ── Avatar Upload ────────────────────────────────────────────────────────────
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Show a local preview immediately (before upload completes)
+    const localPreview = URL.createObjectURL(file);
+    setProfile(p => ({ ...p, avatar: localPreview }));
+
+    setAvatarUploading(true);
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    try {
+      const res = await api.post('/auth/upload-avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      // Replace the blob URL with the permanent cloud URL
+      setProfile(p => ({ ...p, avatar: res.data.avatar }));
+      showToast('Avatar updated!');
+    } catch (err) {
+      showToast(err.response?.data?.msg || 'Avatar upload failed', 'error');
+      setProfile(p => ({ ...p, avatar: user?.avatar || '' })); // revert on error
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
   // ── Profile Submit ──────────────────────────────────────────────────────────
   const handleProfileSave = async (e) => {
     e.preventDefault();
@@ -43,9 +73,6 @@ const Account = () => {
     try {
       await api.put('/auth/update-profile', profile);
       showToast('Profile updated successfully!');
-      // Refresh user data
-      await api.get('/auth/me');
-      // Update context indirectly by re-reading from local storage token
     } catch (err) {
       showToast(err.response?.data?.msg || 'Failed to update profile', 'error');
     } finally {
@@ -91,12 +118,27 @@ const Account = () => {
         <div className="glass-card overflow-hidden">
           {/* Header */}
           <div className="p-6 border-b border-white/10 flex flex-col sm:flex-row items-center gap-4">
-            <div className="relative group">
+            {/* Clickable avatar circle */}
+            <div className="relative group cursor-pointer" onClick={() => avatarInputRef.current?.click()} title="Click to change avatar">
               <div className="w-20 h-20 rounded-full bg-linear-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-2xl font-bold text-white overflow-hidden">
                 {profile.avatar
                   ? <img src={profile.avatar} alt="avatar" className="w-full h-full object-cover"/>
                   : initials}
               </div>
+              {/* Camera overlay */}
+              <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                {avatarUploading
+                  ? <FiLoader size={20} className="text-white animate-spin" />
+                  : <FiCamera size={20} className="text-white" />}
+              </div>
+              {/* Hidden file input */}
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarUpload}
+              />
             </div>
             <div className="text-center sm:text-left">
               <h1 className="text-xl font-bold">{user?.firstName} {user?.lastName}</h1>
@@ -127,17 +169,9 @@ const Account = () => {
             {/* ── Profile Tab ─────────────────────────────────────────────── */}
             {tab === 'profile' && (
               <form onSubmit={handleProfileSave} className="space-y-5 animate-fadeIn">
-                <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">Avatar URL</label>
-                  <input
-                    type="url"
-                    className="input-field"
-                    placeholder="https://example.com/avatar.jpg"
-                    value={profile.avatar}
-                    onChange={(e) => setProfile({ ...profile, avatar: e.target.value })}
-                  />
-                  <p className="text-xs text-slate-500 mt-1">Paste a direct image URL for your profile picture</p>
-                </div>
+                <p className="text-xs text-slate-500 -mt-1 mb-1">
+                  💡 Click your avatar above to upload a photo from your device
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-400 mb-2">First Name <span className="text-danger">*</span></label>
