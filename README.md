@@ -4,6 +4,17 @@ A visually stunning, high-performance, and enterprise-grade secure Kanban Task B
 
 ---
 
+## 🚀 Live Demo
+
+Experience the dynamic TaskBoard interface and robust functionality firsthand:
+
+- **Frontend Application:** [Visit the Live Site on Vercel](https://your-frontend-url.vercel.app)
+- **Backend API:** [View Backend Health/Info](https://your-backend-url.vercel.app) *(Optional)*
+
+*(Note: Replace the placeholder URLs above with your actual Vercel deployment links.)*
+
+---
+
 ## 🌟 App Capabilities & Features
 
 ### 🔥 Frontend (Vite + React)
