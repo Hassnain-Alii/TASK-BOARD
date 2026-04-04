@@ -24,7 +24,7 @@ const Navbar = ({ searchTerm, setSearchTerm, filterPriority, setFilterPriority, 
     : '??';
 
   return (
-    <nav className="flex items-center justify-between px-4 md:px-6 py-3 bg-slate-900/70 backdrop-blur-glass border-b border-white/5 z-30 gap-3">
+    <nav className="relative flex items-center justify-between px-4 md:px-6 py-3 bg-slate-900/70 backdrop-blur-glass border-b border-white/5 z-50 gap-3">
       {/* Left: Logo */}
       <Link to="/board" className="flex items-center gap-2 shrink-0">
         <span className="bg-primary text-white text-xs font-bold px-2 py-1 rounded-lg">TB</span>
@@ -77,7 +77,7 @@ const Navbar = ({ searchTerm, setSearchTerm, filterPriority, setFilterPriority, 
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 top-11 w-52 glass-card rounded-xl! overflow-hidden z-50 animate-fadeIn shadow-xl">
+            <div className="absolute right-0 top-11 w-52 glass-card rounded-xl! overflow-hidden z-50 md:z-50 animate-fadeIn shadow-xl">
               <div className="px-4 py-3 border-b border-white/10">
                 <p className="text-sm font-semibold text-slate-100 truncate">{user?.firstName} {user?.lastName}</p>
                 <p className="text-xs text-slate-400 truncate">{user?.email}</p>

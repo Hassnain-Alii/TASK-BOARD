@@ -95,7 +95,7 @@ const Login = () => {
     `input-field ${errorField === field || errorField === "all" ? "error-shake !border-danger" : ""}`;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-6 relative overflow-hidden">
       {/* Animated background blobs */}
       <div className="absolute w-96 h-96 bg-primary/50 rounded-full blur-[80px] -top-24 -left-24 animate-float -z-10" />
       <div className="absolute w-72 h-72 bg-violet-600/50 rounded-full blur-[80px] -bottom-12 -right-12 animate-float-delay -z-10" />
@@ -151,7 +151,7 @@ const Login = () => {
         </div>
       )}
 
-      <div className="glass-card w-full max-w-md p-10 relative animate-fadeIn">
+      <div className="glass-card w-full max-w-md p-6 sm:p-8 md:p-10 relative animate-fadeIn">
         {loading && (
           <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-slate-900/70 backdrop-blur-sm">
             <div className="w-10 h-10 border-4 border-white/20 border-t-primary rounded-full animate-spin" />

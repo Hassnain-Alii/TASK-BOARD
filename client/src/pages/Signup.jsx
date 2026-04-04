@@ -64,13 +64,13 @@ const Signup = () => {
     `input-field ${errorField === field || errorField === 'all' ? 'error-shake !border-danger' : ''}`;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
       <div className="absolute w-96 h-96 bg-pink-600/40 rounded-full blur-[80px] -top-24 -left-24 animate-float -z-10" />
       <div className="absolute w-72 h-72 bg-primary/40 rounded-full blur-[80px] -bottom-12 -right-12 animate-float-delay -z-10" />
 
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="glass-card w-full max-w-lg p-10 relative animate-fadeIn">
+      <div className="glass-card w-full max-w-lg p-6 sm:p-8 md:p-10 relative animate-fadeIn">
         {loading && (
           <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-slate-900/70 backdrop-blur-sm">
             <div className="w-10 h-10 border-4 border-white/20 border-t-primary rounded-full animate-spin" />
@@ -106,7 +106,7 @@ const Signup = () => {
         </div>
 
         <form onSubmit={handleSignup} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-400 mb-2">First Name <span className="text-danger">*</span></label>
               <input name="firstName" type="text" className={cls('firstName')} placeholder="John (min 3 chars)" value={form.firstName} onChange={handleChange} />

@@ -11,7 +11,7 @@ const Toast = ({ message, type = 'error', onClose }) => {
 
   return (
     <div className={`
-      fixed top-5 right-5 z-9999 flex items-center gap-3 min-w-[280px] max-w-sm px-4 py-3.5
+      fixed top-5 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-5 z-50 flex items-center gap-3 w-[min(90vw,350px)] px-4 py-3.5
       rounded-xl border shadow-xl animate-fadeIn
       ${isSuccess
         ? 'bg-emerald-950/90 border-emerald-500/40 text-emerald-200'

@@ -8,10 +8,10 @@ A visually stunning, high-performance, and enterprise-grade secure Kanban Task B
 
 Experience the dynamic TaskBoard interface and robust functionality firsthand:
 
-- **Frontend Application:** [Visit the Live Site on Vercel](https://your-frontend-url.vercel.app)
-- **Backend API:** [View Backend Health/Info](https://your-backend-url.vercel.app) *(Optional)*
+- **Frontend Application:** [Visit the Live Site on Vercel](https://task-board-frontend-ten.vercel.app)
+- **Backend API:** [View Backend Health/Info](https://task-board-backend-sepia-seven.vercel.app) _(Optional)_
 
-*(Note: Replace the placeholder URLs above with your actual Vercel deployment links.)*
+_(Note: Replace the placeholder URLs above with your actual Vercel deployment links.)_
 
 ---
 
@@ -128,14 +128,17 @@ We prioritize the safety of your data with an enterprise-grade security stack.
 ## 🏗️ Infrastructure Components
 
 ### 1. **Docker & Docker Compose**
+
 - **What is it?** A platform for containerization and a tool for defining and running multi-container applications.
 - **Why we use it?** It ensures the application runs identically on any machine. Our `docker-compose.yml` orchestrates the entire stack (Node, Mongo, Redis, MinIO) in isolated, secure networks, making deployment as simple as one command.
 
 ### 2. **Redis In-Memory Data Store**
+
 - **What is it?** A high-performance, key-value storage system typically used for caching.
 - **Why we use it?** To reduce database load and speed up data retrieval. By caching task boards in Redis, we achieve near-instant response times for returning users.
 
 ### 3. **MinIO Object Storage**
+
 - **What is it?** An S3-compatible high-performance object storage server.
 - **Why we use it?** To handle file storage (like user avatars) in a scalable, cloud-ready way. This keeps our database lightweight and separates binary data from relational/document data.
 

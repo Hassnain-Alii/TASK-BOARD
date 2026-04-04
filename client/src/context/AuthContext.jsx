@@ -54,6 +54,9 @@ export const AuthProvider = ({ children }) => {
       refreshSession();
     }, REFRESH_INTERVAL);
 
+    // Refresh immediately to sync the expiration window upon reload/login
+    refreshSession();
+
     // Auto-logout if user is inactive for 15 minutes
     const resetInactivityTimer = () => {
       clearTimeout(activityTimeout);
