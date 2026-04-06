@@ -8,10 +8,8 @@ A visually stunning, high-performance, and enterprise-grade secure Kanban Task B
 
 Experience the dynamic TaskBoard interface and robust functionality firsthand:
 
-- **Frontend Application:** [Visit the Live Site on Vercel](https://task-board-frontend-ten.vercel.app)
-- **Backend API:** [View Backend Health/Info](https://task-board-backend-sepia-seven.vercel.app) _(Optional)_
-
-_(Note: Replace the placeholder URLs above with your actual Vercel deployment links.)_
+- **Frontend Application:** [https://task-board-frontend-ten.vercel.app](https://task-board-frontend-ten.vercel.app)
+- **Backend API:** [https://task-board-backend-sepia-seven.vercel.app](https://task-board-backend-sepia-seven.vercel.app)
 
 ---
 
@@ -48,7 +46,7 @@ _(Note: Replace the placeholder URLs above with your actual Vercel deployment li
 
 - **Response Compression:** All API responses are compressed via Gzip to reduce bandwidth and speed up page loads.
 
-- **MinIO Object Storage:** Prepared containerized MinIO infrastructure for highly scalable S3-compatible file/avatar uploads.
+- **Supabase Cloud Storage:** Integrated Supabase (S3-compatible) for highly scalable cloud-native file/avatar uploads.
 
 - **JWT Authentication:** Stateful user session management and strict validation for route security.
 
@@ -117,8 +115,9 @@ We prioritize the safety of your data with an enterprise-grade security stack.
 ## 🏗️ Technology Stack
 
 - **Backend**: Node.js, Express.js
-- **Database**: MongoDB (Mongoose)
-- **Caching**: Redis
+- **Database**: MongoDB (Atlas)
+- **Caching**: Redis (Upstash / Local)
+- **Object Storage**: Supabase (Cloud)
 - **Authentication**: JWT, Google OAuth 2.0 (Passport)
 - **Frontend**: React.js, Vite
 - **Styling**: Vanilla CSS (Tailwind/Modern Utilities)
@@ -130,34 +129,33 @@ We prioritize the safety of your data with an enterprise-grade security stack.
 ### 1. **Docker & Docker Compose**
 
 - **What is it?** A platform for containerization and a tool for defining and running multi-container applications.
-- **Why we use it?** It ensures the application runs identically on any machine. Our `docker-compose.yml` orchestrates the entire stack (Node, Mongo, Redis, MinIO) in isolated, secure networks, making deployment as simple as one command.
+- **Why we use it?** It ensures the application runs identically on any machine. Our `docker-compose.yml` orchestrates the entire stack (Node, Mongo, Redis) in isolated, secure networks, making deployment as simple as one command.
 
 ### 2. **Redis In-Memory Data Store**
 
 - **What is it?** A high-performance, key-value storage system typically used for caching.
 - **Why we use it?** To reduce database load and speed up data retrieval. By caching task boards in Redis, we achieve near-instant response times for returning users.
 
-### 3. **MinIO Object Storage**
+### 3. **Supabase Cloud Storage**
 
-- **What is it?** An S3-compatible high-performance object storage server.
-- **Why we use it?** To handle file storage (like user avatars) in a scalable, cloud-ready way. This keeps our database lightweight and separates binary data from relational/document data.
+- **What is it?** A cloud-native project that provides object storage, database, and auth.
+- **Why we use it?** Specifically for object storage to handle file uploads (like user avatars) in a "forever free" production environment. This keeps our database lightweight and removes the need for local storage management.
 
 ---
 
 ## 🐳 Quick Start (Docker Orchestration)
 
-To spin up the entire cluster quickly:
+To spin up the entire cluster quickly for local development:
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 This single command orchestrates:
 
-1. **Node.js Express Server**
-2. **MongoDB Database**
-3. **Redis Cluster**
-4. **MinIO Object Store**
-5. **React Client App**
+1. **Node.js Express Server** (Port 5000)
+2. **MongoDB Database** (Port 27017)
+3. **Redis Cache** (Port 6379)
+4. **React Client App** (Port 5173)
 
 _Open `http://localhost:5173/` and enjoy the product!_
